@@ -2,12 +2,10 @@ package com.ray.raypicturebackend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ray.raypicturebackend.model.dto.picture.PictureQueryRequest;
-import com.ray.raypicturebackend.model.dto.picture.PictureReviewRequest;
-import com.ray.raypicturebackend.model.dto.picture.PictureUploadByBatchRequest;
-import com.ray.raypicturebackend.model.dto.picture.PictureUploadRequest;
+import com.ray.raypicturebackend.model.dto.picture.*;
 import com.ray.raypicturebackend.model.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ray.raypicturebackend.model.entity.Space;
 import com.ray.raypicturebackend.model.entity.User;
 import com.ray.raypicturebackend.model.vo.PictureVo;
 import org.springframework.scheduling.annotation.Async;
@@ -40,4 +38,10 @@ public interface PictureService extends IService<Picture> {
     void clearPictureFile(Picture oldPicture);
 
     String getRelativePath(String urlString);
+
+    void checkPictureAuth(User loginUser, Picture picture);
+
+    void deletePicture(long pictureId, User loginUser);
+
+    void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
 }

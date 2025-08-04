@@ -123,6 +123,11 @@ public class Picture implements Serializable {
     private Date reviewTime;
 
     /**
+     * 空间 id
+     */
+    private Long spaceId; // null表示公共图库
+
+    /**
      * 是否删除
      */
     @TableLogic

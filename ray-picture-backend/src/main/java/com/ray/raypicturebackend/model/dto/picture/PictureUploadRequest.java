@@ -11,4 +11,5 @@ public class PictureUploadRequest implements Serializable {
     private Long id; //接受id因为重复上传图片就是在更新图片
     private String fileUrl;
     private String picName; // 批量上传的时候用来控制名字
+    private Long spaceId;
 }

@@ -190,6 +190,7 @@ const pagination = computed(() => {
 const fetchData = async () => {
   const res = await listPictureByPageUsingPost({
     ...searchParams,
+    nullSpaceId:true //管理员只需要查看公共图库的信息
   })
   if (res.data.data) {
     dataList.value = res.data.data.records ?? []

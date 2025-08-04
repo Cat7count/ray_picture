@@ -2,9 +2,12 @@
   <div id="basicLayout">
     <a-layout style="min-height: 100vh">
       <a-layout-header class="header"><GlobalHeader/></a-layout-header>
-      <a-layout-content class="content">
-        <router-view />
-      </a-layout-content>
+      <a-layout>
+        <GlobalSider class="sider" />
+        <a-layout-content class="content">
+          <router-view />
+        </a-layout-content>
+      </a-layout>
       <a-layout-footer class="footer">
         <a href="https://www.bilibili.com/" target="_blank">by 哈基米</a>
       </a-layout-footer>
@@ -14,6 +17,7 @@
 
 <script setup lang="ts">
 import GlobalHeader from '@/components/GlobalHeader.vue'
+import GlobalSider from '@/components/GlobalSider.vue'
 </script>
 
 <style scoped>
