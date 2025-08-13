@@ -23,8 +23,8 @@ public class FilePictureUpload extends PictureUploadTemplate{
         // 2.校验文件后缀
         String suffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
         // 允许上传的文件后缀
-        final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "webp");
-        ThrowUtils.throwIf(!ALLOWED_EXTENSIONS.contains(suffix), ErrorCode.PARAMS_ERROR,"文件格式错误");
+        final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png"); // webp不支持以图搜图
+        ThrowUtils.throwIf(!ALLOWED_EXTENSIONS.contains(suffix), ErrorCode.PARAMS_ERROR,"目前只支持jpg,png,jpeg格式图片");
 
     }
 

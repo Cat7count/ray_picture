@@ -9,9 +9,11 @@ import com.ray.raypicturebackend.model.entity.Space;
 import com.ray.raypicturebackend.model.entity.User;
 import com.ray.raypicturebackend.model.vo.PictureVo;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @author Ray
@@ -44,4 +46,8 @@ public interface PictureService extends IService<Picture> {
     void deletePicture(long pictureId, User loginUser);
 
     void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
+
+    List<PictureVo> searchPictureByColor(Long spaceId, String picColor, User loginUser);
+
+    void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
 }

@@ -24,7 +24,7 @@ public class Picture implements Serializable {
     private Long id;
 
     /**
-     * 图片 url
+     * webp图片 url
      */
     private String url;
 
@@ -82,6 +82,11 @@ public class Picture implements Serializable {
      * 图片格式
      */
     private String picFormat;
+
+    /**
+     * 图片主色调
+     */
+    private String picColor;
 
     /**
      * 创建用户 id

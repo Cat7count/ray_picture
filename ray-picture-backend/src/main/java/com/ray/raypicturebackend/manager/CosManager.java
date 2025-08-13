@@ -1,18 +1,23 @@
 package com.ray.raypicturebackend.manager;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.json.JSONUtil;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.exception.CosClientException;
-import com.qcloud.cos.model.COSObject;
-import com.qcloud.cos.model.GetObjectRequest;
-import com.qcloud.cos.model.PutObjectRequest;
-import com.qcloud.cos.model.PutObjectResult;
+import com.qcloud.cos.model.*;
 import com.qcloud.cos.model.ciModel.persistence.PicOperations;
 import com.ray.raypicturebackend.config.CosClientConfig;
+import com.ray.raypicturebackend.exception.BusinessException;
+import com.ray.raypicturebackend.exception.ErrorCode;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,5 +94,23 @@ public class CosManager {
      */
     public void deleteObject(String key) throws CosClientException {
         cosClient.deleteObject(cosClientConfig.getBucket(), key);
+    }
+
+    /**
+     * 获取图片主色调
+     */
+    public String getImageAve(String key) {
+        GetObjectRequest getObjectRequest = new GetObjectRequest(cosClientConfig.getBucket(), key);
+        String rule = "imageAve";
+        getObjectRequest.putCustomQueryParameter(rule, null);
+        COSObject object = cosClient.getObject(getObjectRequest);
+        COSObjectInputStream objectContent = object.getObjectContent();
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            CloseableHttpResponse httpResponse = httpClient.execute(objectContent.getHttpRequest());
+            String response = EntityUtils.toString(httpResponse.getEntity());
+            return JSONUtil.parseObj(response).getStr("RGB");
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
     }
 }

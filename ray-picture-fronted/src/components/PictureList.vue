@@ -30,28 +30,27 @@
                 </a-flex>
               </template>
             </a-card-meta>
-            <template #actions>
-              <a-space @click="e => doEdit(picture, e)">
-                <edit-outlined />
-                编辑
-              </a-space>
-              <a-space @click="e => doDelete(picture, e)">
-                <delete-outlined />
-                删除
-              </a-space>
+            <template v-if="showOp" #actions>
+              <search-outlined @click="(e) => doSearch(picture, e)" />
+              <share-alt-outlined @click="(e) => doShare(picture, e)" />
+              <edit-outlined @click="(e) => doEdit(picture, e)" />
+              <delete-outlined @click="(e) => doDelete(picture, e)" />
             </template>
           </a-card>
         </a-list-item>
       </template>
+      <ShareModal ref="shareModalRef" :link="shareLink" />
     </a-list>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
+import { EditOutlined, DeleteOutlined, SearchOutlined,ShareAltOutlined } from '@ant-design/icons-vue'
 import { deletePictureUsingPost } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
+import ShareModal from '@/components/ShareModal.vue'
+import { ref } from 'vue'
 
 interface Props {
   dataList?: API.PictureVo[]
@@ -86,6 +85,12 @@ const doEdit = (picture, e) => {
   })
 }
 
+// 搜索
+const doSearch = (picture, e) => {
+  e.stopPropagation()
+  window.open(`/search_picture?pictureId=${picture.id}`)
+}
+
 // 删除
 const doDelete = async (picture, e) => {
   e.stopPropagation() // 防止事件冒泡，触发卡片绑定的时间
@@ -103,7 +108,25 @@ const doDelete = async (picture, e) => {
   }
 }
 
+// 分享弹窗引用
+const shareModalRef = ref()
+// 分享链接
+const shareLink = ref<string>()
+
+// 分享
+const doShare = (picture: API.PictureVo, e: Event) => {
+  e.stopPropagation()
+  shareLink.value = `${window.location.protocol}//${window.location.host}/picture/${picture.id}`
+  if (shareModalRef.value) {
+    shareModalRef.value.openModal()
+  }
+}
+
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.picture-list{
+  margin-top: 16px;
+}
+</style>

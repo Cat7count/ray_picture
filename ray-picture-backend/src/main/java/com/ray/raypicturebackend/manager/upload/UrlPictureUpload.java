@@ -46,8 +46,8 @@ public class UrlPictureUpload extends PictureUploadTemplate{
             // 4. 校验文件类型
             String contentType = response.header("Content-Type");
             if(StrUtil.isNotBlank(contentType)){
-                final List<String> ALLOW_CONTENT_TYPES = Arrays.asList("image/jpeg", "image/png", "image/webp");
-                ThrowUtils.throwIf(!ALLOW_CONTENT_TYPES.contains(contentType), ErrorCode.PARAMS_ERROR,"文件类型错误");
+                final List<String> ALLOW_CONTENT_TYPES = Arrays.asList("image/jpeg", "image/png", "image/jpg");
+                ThrowUtils.throwIf(!ALLOW_CONTENT_TYPES.contains(contentType), ErrorCode.PARAMS_ERROR,"目前只支持jpg,png,jpeg格式图片");
             }
 
             // 5. 校验文件大小

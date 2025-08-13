@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.ray.raypicturebackend.annotation.AuthCheck;
+import com.ray.raypicturebackend.api.imagesearch.ImageSearchApiFacade;
+import com.ray.raypicturebackend.api.imagesearch.model.ImageSearchResult;
 import com.ray.raypicturebackend.common.BaseResponse;
 import com.ray.raypicturebackend.common.DeleteRequest;
 import com.ray.raypicturebackend.common.ResultUtils;
@@ -189,6 +191,7 @@ public class PictureController {
         // 查询数据库
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                 pictureService.getQueryWrapper(pictureQueryRequest));
+
         // 获取封装类
         return ResultUtils.success(pictureService.getPictureVOPage(picturePage, request));
     }
@@ -289,5 +292,41 @@ public class PictureController {
         User loginUser = userService.getLoginUser(request);
         Integer result = pictureService.uploadPictureByBatch(pictureUploadByBatchRequest, loginUser);
         return ResultUtils.success(result);
+    }
+
+    /**
+     * 以图搜图
+     */
+    @PostMapping("/search/picture")
+    public BaseResponse<List<ImageSearchResult>> searchPictureByPicture(@RequestBody SearchPictureByPictureRequest searchPictureByPictureRequest) {
+        ThrowUtils.throwIf(searchPictureByPictureRequest == null, ErrorCode.PARAMS_ERROR);
+        Long pictureId = searchPictureByPictureRequest.getPictureId();
+        ThrowUtils.throwIf(pictureId == null || pictureId <= 0, ErrorCode.PARAMS_ERROR);
+        Picture oldPicture = pictureService.getById(pictureId);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCode.NOT_FOUND_ERROR);
+        List<ImageSearchResult> resultList = ImageSearchApiFacade.searchImage(oldPicture.getOriginalUrl());
+        return ResultUtils.success(resultList);
+    }
+    /**
+     * 根据颜色搜图
+     */
+    @PostMapping("/search/color")
+    public BaseResponse<List<PictureVo>> searchPictureByColor(@RequestBody SearchPictureByColorRequest searchPictureByColorRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(searchPictureByColorRequest == null, ErrorCode.PARAMS_ERROR);
+        String picColor = searchPictureByColorRequest.getPicColor();
+        Long spaceId = searchPictureByColorRequest.getSpaceId();
+        User loginUser = userService.getLoginUser(request);
+        List<PictureVo> result = pictureService.searchPictureByColor(spaceId, picColor, loginUser);
+        return ResultUtils.success(result);
+    }
+    /**
+     * 批量修改图片
+     */
+    @PostMapping("/edit/batch")
+    public BaseResponse<Boolean> editPictureByBatch(@RequestBody PictureEditByBatchRequest pictureEditByBatchRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(pictureEditByBatchRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        pictureService.editPictureByBatch(pictureEditByBatchRequest, loginUser);
+        return ResultUtils.success(true);
     }
 }

@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.model.ciModel.persistence.CIObject;
 import com.qcloud.cos.model.ciModel.persistence.ImageInfo;
@@ -12,6 +13,7 @@ import com.qcloud.cos.model.ciModel.persistence.ProcessResults;
 import com.ray.raypicturebackend.config.CosClientConfig;
 import com.ray.raypicturebackend.exception.BusinessException;
 import com.ray.raypicturebackend.exception.ErrorCode;
+import com.ray.raypicturebackend.exception.ThrowUtils;
 import com.ray.raypicturebackend.manager.CosManager;
 import com.ray.raypicturebackend.model.dto.file.UploadPictureResult;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,7 @@ public abstract class PictureUploadTemplate {
             processFile(inputSource,file);
             // 上传至对象存储
             PutObjectResult putObjectResult = cosManager.putPictureObject(uploadFilePath, file);
+            System.out.println("hello");
             ImageInfo imageInfo = putObjectResult.getCiUploadResult().getOriginalInfo().getImageInfo();
             ProcessResults processResults = putObjectResult.getCiUploadResult().getProcessResults(); // 返回webp图的封装结果
             List<CIObject> objectList = processResults.getObjectList();
@@ -89,6 +92,10 @@ public abstract class PictureUploadTemplate {
         uploadPictureResult.setPicFormat(imageInfo.getFormat());
         uploadPictureResult.setPicSize(FileUtil.size(file));
         uploadPictureResult.setUrl(cosClientConfig.getHost() + uploadFilePath);
+        // 设置图片主色调
+        String imageAve = cosManager.getImageAve(uploadFilePath);
+        ThrowUtils.throwIf(StrUtil.isEmpty(imageAve),ErrorCode.OPERATION_ERROR,"获取图片主色调失败");
+        uploadPictureResult.setPicColor(imageAve);
         return uploadPictureResult;
     }
 
@@ -106,6 +113,10 @@ public abstract class PictureUploadTemplate {
         uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + compressCiObject.getKey());
         uploadPictureResult.setThumbnailUrl(cosClientConfig.getHost() + "/" + thumbnailCiObject.getKey());
         uploadPictureResult.setOriginalUrl(cosClientConfig.getHost() + uploadFilePath);
+        // 设置图片主色调
+        String imageAve = cosManager.getImageAve(uploadFilePath);
+        ThrowUtils.throwIf(StrUtil.isEmpty(imageAve),ErrorCode.OPERATION_ERROR,"获取图片主色调失败");
+        uploadPictureResult.setPicColor(imageAve);
         return uploadPictureResult;
     }
 

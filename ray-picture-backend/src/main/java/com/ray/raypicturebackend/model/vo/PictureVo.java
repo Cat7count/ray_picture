@@ -19,7 +19,7 @@ public class PictureVo implements Serializable {
     private Long id;
 
     /**
-     * 图片 url
+     * webp图片 url
      */
     private String url;
 
@@ -27,6 +27,11 @@ public class PictureVo implements Serializable {
      * 缩略图 url
      */
     private String thumbnailUrl;
+
+    /**
+     * 原图 url
+     */
+    private String originalUrl;
 
     /**
      * 图片名称
@@ -72,6 +77,11 @@ public class PictureVo implements Serializable {
      * 图片格式
      */
     private String picFormat;
+
+    /**
+     * 图片主色调
+     */
+    private String picColor;
 
     /**
      * 用户 id
