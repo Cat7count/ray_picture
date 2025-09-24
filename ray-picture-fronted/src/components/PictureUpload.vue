@@ -69,8 +69,6 @@ const handleUpload = async ({ file }: any) => {
   }
 }
 
-
-
 </script>
 
 <style scoped>
